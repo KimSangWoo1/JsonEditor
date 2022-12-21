@@ -67,7 +67,9 @@ public class JsonEditorExtention : Editor
                 btnStyle.normal.textColor = Color.white;
                 btnStyle.border = new RectOffset(5, 5, 5, 5);
                 btnStyle.wordWrap = true;
-                btnStyle.fixedWidth = WIDTH;
+
+                //===== Unity 버전마다 위치 및 크기 변경 ======
+                //btnStyle.fixedWidth = WIDTH;
                 btnStyle.fixedHeight = HEIGHT;
             }
 
@@ -160,8 +162,13 @@ public class JsonEditorExtention : Editor
     const int HUGE_SPACE = 30;
     const int LIMIT_SPACE = 800;
 
-    const int WIDTH = 150; // !!!! Change button width size for each Unity version
-    const int HEIGHT = 30; // !!!! Change button height size for each Unity version
+    //==========!!!! Change size for each Unity version ================================ [ Tool 설정 창에서 값 자유롭게 변경하도록 만들어도 됨 (현재 미구현) ] ===
+    const int START_RECT_X = 2; 
+    const int START_RECT_Y = 2; 
+
+    const int WIDTH = 150; 
+    const int HEIGHT = 35; 
+    // ==================================================================================
     #endregion
 
     private void OnEnable()
@@ -197,7 +204,7 @@ public class JsonEditorExtention : Editor
     private void BaseView()
     {
         var lineCount = File.ReadLines(EditorPath).Count();
-        initialRect = new Rect(10, EditorGUIUtility.singleLineHeight * 3 + 10, EditorGUIUtility.currentViewWidth - HUGE_SPACE, lineCount * 5 + 500);
+        initialRect = new Rect(START_RECT_X, START_RECT_Y, EditorGUIUtility.currentViewWidth - HUGE_SPACE, lineCount * 5 + 500);
         limitSpace = initialRect.size.y >= LIMIT_SPACE ? LIMIT_SPACE : initialRect.size.y;
 
         GUILayout.BeginVertical();
@@ -234,33 +241,13 @@ public class JsonEditorExtention : Editor
             onSubView();
         }
     }
-    #region Inpector View
+    #region Main View
     public static void ShowMainView()
     {
         if (jsonObject != null)
         {
             GUILayout.Label(jsonObject.ToString(), ShowStyle);
         }
-    }
-    private void ShowSubView()
-    {
-        // ====================================================================================================================================
-        GUILayout.Space(limitSpace + BIG_SPACE);
-        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
-        if (GUILayout.Button("Edit Inspector", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
-        {
-            jsonShow = false;
-        }
-        // ====================================================================================================================================
-        if (GUILayout.Button("Edit Text", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
-        {
-            if(jsonObject!=null)
-                editText = jsonObject.ToString();
-
-            jsonShow = false;
-            jsonTextEdit = true;
-        }
-        EditorGUILayout.EndHorizontal();
     }
 
     public static void ShowTreeMainView()
@@ -285,10 +272,143 @@ public class JsonEditorExtention : Editor
         }
     }
 
-    private static void SubEditControlView()
+    public static void TextEditMainView()
+    {
+        editText = GUILayout.TextArea(editText, EditStyle);
+    }
+
+
+    #endregion
+
+    #region Sub View
+    private void ShowSubView()
     {
         // ====================================================================================================================================
         GUILayout.Space(limitSpace + BIG_SPACE);
+        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
+        if (GUILayout.Button("Edit Inspector", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
+        {
+            jsonShow = false;
+        }
+        // ====================================================================================================================================
+        if (GUILayout.Button("Edit Text", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
+        {
+            if (jsonObject != null)
+                editText = jsonObject.ToString();
+
+            jsonShow = false;
+            jsonTextEdit = true;
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void TreeSubView()
+    {
+        // ====================================================================================================================================
+        GUILayout.Space(limitSpace + BIG_SPACE);
+        treeExpand = GUILayout.Toggle(treeExpand, "Tree Expand");
+        FoldExpand(treeExpand);
+
+        // ====================================================================================================================================
+        GUILayout.Space(NORMAL_SPACE);
+        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
+        if (GUILayout.Button("Edit Inspector", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
+        {
+            treeShow = false;
+        }
+        // ====================================================================================================================================
+        if (GUILayout.Button("Edit Text", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
+        {
+            if (jsonObject != null)
+                editText = jsonObject.ToString();
+
+            jsonShow = false;
+            jsonTextEdit = true;
+        }
+        EditorGUILayout.EndHorizontal();
+
+        // ====================================================================================================================================
+        GUILayout.Space(NORMAL_SPACE);
+        if (GUILayout.Button("Show Json", BtnStyle, GUILayout.Width(initialRect.size.x), GUILayout.Height(HUGE_SPACE)))
+        {
+            treeShow = false;
+            jsonShow = true;
+            ReadJson();
+        }
+    }
+
+    #region Inspector Text Sub View
+    public static void TextEditSubView(bool tool = false)
+    {
+        if (tool || initialRect == Rect.zero)
+        {
+            var lineCount = File.ReadLines(Path).Count();
+            initialRect.size = new Vector2(200, lineCount * 5 + 500);
+        }
+        SubTextEditControlView();
+    }
+
+    private static void TextEditSubView()
+    {
+        GUILayout.Space(limitSpace + BIG_SPACE);
+        SubTextEditControlView();
+
+        SubTextEditShowView();
+    }
+    private static void SubTextEditControlView()
+    {
+        if (GUILayout.Button("Save", BtnStyle, GUILayout.Width(initialRect.size.x), GUILayout.Height(HUGE_SPACE)))
+        {
+            SaveJson();
+            ReadJson();
+        }
+    }
+    private static void SubTextEditShowView()
+    {
+        GUILayout.Space(NORMAL_SPACE);
+        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
+
+        if (GUILayout.Button("Show Json", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
+        {
+            editText = "";
+            jsonShow = true;
+            jsonTextEdit = false;
+        }
+        // ====================================================================================================================================
+        if (GUILayout.Button("Show Tree", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
+        {
+            editText = "";
+            treeShow = true;
+            jsonTextEdit = false;
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    #endregion
+
+    #region Inspector Edit Sub View
+
+    public static void InspecterEditSubView(bool tool = false)
+    {
+        if (tool || initialRect == Rect.zero)
+        {
+            var lineCount = File.ReadLines(Path).Count();
+            initialRect.size = new Vector2(200, lineCount * 5 + 500);
+        }
+
+        SubInspectorEditControlView();
+    }
+
+    private static void InspecterEditSubView()
+    {
+        GUILayout.Space(limitSpace + BIG_SPACE);
+        SubInspectorEditControlView();
+
+        SubInspectorEditShowView();
+    }
+
+    private static void SubInspectorEditControlView()
+    {
+        // ====================================================================================================================================
         if (GUILayout.Button("Save", BtnStyle, GUILayout.Width(initialRect.size.x - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
         {
             jsonInspectorEdit = true;
@@ -336,7 +456,7 @@ public class JsonEditorExtention : Editor
         }
     }
 
-    private static void SubEditShowView()
+    private static void SubInspectorEditShowView()
     {
         // ====================================================================================================================================
         GUILayout.Space(NORMAL_SPACE);
@@ -355,92 +475,8 @@ public class JsonEditorExtention : Editor
 
         EditorGUILayout.EndHorizontal();
     }
+    #endregion
 
-    public static void InspecterEditSubView(bool tool = false)
-    {
-        if (tool || initialRect == Rect.zero)
-        {
-            var lineCount = File.ReadLines(Path).Count();
-            initialRect.size = new Vector2(200, lineCount * 5 + 500);
-        }
-
-        SubEditControlView();
-    }
-
-    private static void InspecterEditSubView()
-    {
-        SubEditControlView();
-        SubEditShowView();
-    }
-
-    private void TreeSubView()
-    {
-        // ====================================================================================================================================
-        GUILayout.Space(limitSpace + BIG_SPACE);
-        treeExpand = GUILayout.Toggle(treeExpand, "Tree Expand");
-        FoldExpand(treeExpand);
-
-        // ====================================================================================================================================
-        GUILayout.Space(NORMAL_SPACE);
-        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
-        if (GUILayout.Button("Edit Inspector", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
-        {
-            treeShow = false;
-        }
-        // ====================================================================================================================================
-        if (GUILayout.Button("Edit Text", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
-        {
-            if (jsonObject != null)
-                editText = jsonObject.ToString();
-
-            jsonShow = false;
-            jsonTextEdit = true;
-        }
-        EditorGUILayout.EndHorizontal();
-
-        // ====================================================================================================================================
-        GUILayout.Space(NORMAL_SPACE);
-        if (GUILayout.Button("Show Json", BtnStyle, GUILayout.Width(initialRect.size.x), GUILayout.Height(HUGE_SPACE)))
-        {
-            treeShow = false;
-            jsonShow = true;
-            ReadJson();
-        }
-    }
-
-    public static void TextEditMainView()
-    {
-        editText = GUILayout.TextArea(editText, EditStyle);
-    }
-
-    private void TextEditSubView()
-    {
-        // ====================================================================================================================================
-        GUILayout.Space(limitSpace + BIG_SPACE);
-        if (GUILayout.Button("Save", BtnStyle, GUILayout.Width(initialRect.size.x), GUILayout.Height(HUGE_SPACE)))
-        {
-            SaveJson();
-            ReadJson();
-        }
-        // ====================================================================================================================================
-        GUILayout.Space(NORMAL_SPACE);
-        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
-
-        if (GUILayout.Button("Show Json", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
-        {
-            editText = "";
-            jsonShow = true;
-            jsonTextEdit = false;
-        }
-        // ====================================================================================================================================
-        if (GUILayout.Button("Show Tree", BtnStyle, GUILayout.Width(initialRect.size.x / 2 - NORMAL_SPACE), GUILayout.Height(HUGE_SPACE)))
-        {
-            editText = "";
-            treeShow = true;
-            jsonTextEdit = false;
-        }
-        EditorGUILayout.EndHorizontal();
-    }
     #endregion
 
     #region Button Event
@@ -559,8 +595,8 @@ public class JsonEditorExtention : Editor
             editText = jsonObject.ToString();
         }
 
-        jsonInspectorEdit = false;
-        jsonTextEdit = false;
+        //jsonInspectorEdit = false;
+        //jsonTextEdit = false;
 
         File.WriteAllText(Path, editText);
         AssetDatabase.Refresh();

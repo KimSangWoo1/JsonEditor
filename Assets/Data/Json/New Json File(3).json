@@ -1,0 +1,10 @@
+{
+  "이름": "김김김",
+  "new float": 1.2,
+  "new integer": 5,
+  "new boolean": true,
+  "new Empty Object": {
+    "new float": 3.2
+  },
+  "new Empty Array": []
+}

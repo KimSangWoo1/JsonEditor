@@ -197,11 +197,18 @@ public class JsonEditor : EditorWindow
                 JsonEditorExtention.jsonInspectorEdit = true;
             }
 
+            if (JsonEditorExtention.jsonTextEdit)
+            {
+                GUILayout.Space(50);
+                JsonEditorExtention.TextEditSubView(true);
+            }
+
             if (JsonEditorExtention.jsonInspectorEdit)
             {
                 GUILayout.Space(50);
                 JsonEditorExtention.InspecterEditSubView(true);
             }
+
         }
         GUILayout.EndHorizontal();
     }
