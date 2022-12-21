@@ -1,0 +1,49 @@
+{
+  "qweqwe": "하하",
+  "intt": 332,
+  "gg": "wwww",
+  "ss": 25,
+  "bbb": {
+    "bb": 2,
+    "new string": "",
+    "new Empty Array": [
+      {
+        "new string": ""
+      },
+      {
+        "new integer": 0
+      },
+      {
+        "new boolean": false
+      }
+    ]
+  },
+  "tf": true,
+  "qq": 0.42,
+  "new Empty Array": [
+    {
+      "new string": ""
+    },
+    {
+      "new integer": 0
+    },
+    {
+      "new float": 0.0
+    },
+    {
+      "new integer": 0
+    }
+  ],
+  "new Empty Array 1": [
+    {
+      "new Empty Array": []
+    },
+    {
+      "new Empty Object": {}
+    }
+  ],
+  "new Empty Object": {
+    "new Empty Object": {},
+    "new Empty Array": []
+  }
+}

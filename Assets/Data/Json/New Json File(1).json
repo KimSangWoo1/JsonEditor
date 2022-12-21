@@ -1,0 +1,98 @@
+{
+  "new string": "asd",
+  "new float": 0.0,
+  "new boolean": false,
+  "new Empty Object": {
+    "new float": 0.0,
+    "new string": ""
+  },
+  "new Empty Array": [
+    {
+      "new float": 0.0
+    },
+    {
+      "new integer": 0
+    },
+    {
+      "new integer": 0
+    }
+  ],
+  "new float 1": 0.0,
+  "new Empty Object 1": {},
+  "new Empty Array 1": [
+    {
+      "new Empty Object": {
+        "new integer": 0,
+        "new float": 0.0
+      }
+    },
+    {
+      "new Empty Array": [
+        {
+          "new integer": 0
+        },
+        {
+          "new Empty Object": {
+            "new Empty Object": {
+              "new string": "",
+              "new string 1": ""
+            },
+            "new Empty Array": [
+              {
+                "new float": 0.0
+              },
+              {
+                "new float": 0.0
+              }
+            ]
+          }
+        },
+        {
+          "new Empty Array": [
+            {
+              "new integer": 0
+            },
+            {
+              "new string": ""
+            },
+            {
+              "new Empty Object": {
+                "new string": "",
+                "new float": 0.0
+              }
+            },
+            {
+              "new Empty Array": [
+                {
+                  "new string": ""
+                },
+                {
+                  "new string": ""
+                }
+              ]
+            },
+            {
+              "new Empty Object": {
+                "new string": "",
+                "new string 1": ""
+              }
+            },
+            {
+              "new Empty Array": [
+                {
+                  "new float": 0.0
+                },
+                {
+                  "new string": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "new float 2": 0.0,
+  "new float 3": 0.0,
+  "new integer": 0
+}
